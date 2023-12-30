@@ -3,6 +3,9 @@ gcp-credentials.json
 gcr-credentials.json
 
 server
+cnpg-system
+cert-manager
+istio-system
 gcp-resources
 
 # OSX
