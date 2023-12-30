@@ -8,10 +8,10 @@ metadata:
 spec:
   interval: 1m0s
   ref:
-    branch: k8s-changes
+    branch: k8s
   secretRef:
     name: flux-system
-  url: ssh://git@github.com/simardeep1792/data-engineering-k8s.git
+  url: ssh://git@github.com/simardeep1792/crossplane-k8s-gitops.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
