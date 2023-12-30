@@ -25,7 +25,7 @@ metadata:
   name: istio-system
   namespace: flux-system
 spec:
-  interval: 1h0m0s
+  interval: 2m0s
   path: ./k8s/istio-system
   prune: true
   sourceRef:
