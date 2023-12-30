@@ -3,7 +3,6 @@ gcp-credentials.json
 gcr-credentials.json
 
 server
-crossplane-system
 gcp-resources
 
 # OSX
