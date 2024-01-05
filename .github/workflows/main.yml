@@ -12,7 +12,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.issue.pull_request.head.ref }}
+          ref: ${{ github.event.issue.pull_request.base.ref }}
 
       - name: Print Name of Current Branch
         run: |
