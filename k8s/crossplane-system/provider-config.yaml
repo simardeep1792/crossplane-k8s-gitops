@@ -1,0 +1,61 @@
+apiVersion: gcp.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: provider-gcp
+spec:
+  credentials:
+    secretRef:
+      key: creds
+      name: gcp-secret
+      namespace: crossplane-system
+    source: Secret
+  projectID: phx-01had7ny8p
+---
+apiVersion: tf.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+spec:
+  # Note that unlike most provider configs this one supports an array of
+  # credentials. This is because each Terraform workspace uses a single
+  # Crossplane provider config, but could use multiple Terraform providers each
+  # with their own credentials.
+  credentials:
+    - filename: gcp-credentials.json
+      source: Secret
+      secretRef:
+        namespace: crossplane-system
+        name: gcp-secret
+        key: creds
+  # This optional configuration block can be used to inject HCL into any
+  # workspace that uses this provider config, for example to setup Terraform
+  # providers.
+  configuration: |
+    provider "google" {
+      credentials = "gcp-credentials.json"
+      project     = "phx-01had7ny8p"
+    }
+
+    provider "google-beta" {
+      credentials = "gcp-credentials.json"
+      project     = "phx-01had7ny8p"
+    }
+
+    // Modules _must_ use remote state. The provider does not persist state.
+    terraform {
+      backend "kubernetes" {
+        secret_suffix     = "tf-default"
+        namespace         = "crossplane-system"
+        in_cluster_config = true
+      }
+      required_providers {
+        google = {
+          source  = "hashicorp/google"
+          version = "~> 4.83.0"
+        }
+        google-beta = {
+          source  = "hashicorp/google-beta"
+          version = "~> 4.83.0"
+        }
+      }
+    }
