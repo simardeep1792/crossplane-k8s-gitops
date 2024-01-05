@@ -1,0 +1,31 @@
+name: Update YAML
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  update-yaml:
+    runs-on: ubuntu-latest
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/new-deploy')
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.issue.pull_request.head.ref }}
+
+      - name: Get PR Information
+        id: pr-info
+        run: |
+          PR_RESPONSE=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.issue.number }})
+          PR_BASE=$(echo "$PR_RESPONSE" | jq -r .base.ref)
+          PR_HEAD=$(echo "$PR_RESPONSE" | jq -r .head.ref)
+          echo "Base branch (PR is merging into): $PR_BASE"
+          echo "Head branch (branch being merged): $PR_HEAD"
+          echo "::set-output name=base_branch::$PR_BASE"
+          echo "::set-output name=head_branch::$PR_HEAD"
+
+      - name: Print Branch Information
+        run: |
+          echo "The PR is merging from branch '${{ steps.pr-info.outputs.head_branch }}' into branch '${{ steps.pr-info.outputs.base_branch }}'"
